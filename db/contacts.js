@@ -6,6 +6,7 @@ const FILE_PATH = path.join(__dirname, "contacts.json");
 
 async function read() {
   const data = await fs.readFile(FILE_PATH, "utf-8");
+
   return JSON.parse(data);
 }
 
@@ -15,30 +16,41 @@ function write(data) {
 
 async function listContacts() {
   const data = await read();
+
   return data;
 }
 
 async function getContactById(id) {
   const data = await read();
-  return data.find((book) => book.id === id);
+
+  return data.find((contact) => contact.id === id);
 }
 
-async function addContact(book) {
+async function addContact({contact}) {
   const data = await read();
-  const newBook = { ...book, id: crypto.randomUUID() };
-  data.push(newBook);
+
+  const newContact = { ...contact, id: crypto.randomUUID() };
+
+  data.push(newContact);
+
   await write(data);
-  return newBook;
+
+  return newContact;
 }
 
 async function removeContact(id) {
   const data = await read();
-  const index = data.findIndex((book) => book.id === id);
+
+  const index = data.findIndex((contact) => contact.id === id);
+
   if (index === -1) {
     return undefined;
   }
-  const newBooks = [...data.slice(0, index), ...data.slice(index + 1)];
-  await write(newBooks);
+
+  const newContacts = [...data.slice(0, index), ...data.slice(index + 1)];
+
+  await write(newContacts);
+
   return data[index];
 }
 

@@ -1,7 +1,8 @@
 const { program } = require("commander");
-const Contacts = require("./db/contacts.js");
 
-async function invokeAction({ action, id, name, title, author }) {
+const Contacts = require("./db/contacts");
+
+async function invokeAction({ action, id, name, email, phone }) {
   switch (action) {
     case "list":
       const contacts = await Contacts.listContacts();
@@ -10,7 +11,7 @@ async function invokeAction({ action, id, name, title, author }) {
       const contact = await Contacts.getContactById(id);
       return contact;
     case "add":
-      const newContact = await Contacts.addContact({ name, title, author });
+      const newContact = await Contacts.addContact({ name, email, phone });
       return newContact;
     case "remove":
       const removedContact = await Contacts.removeContact(id);
@@ -22,11 +23,12 @@ async function invokeAction({ action, id, name, title, author }) {
 
 program
   .option("-a, --action <action>", "Action to invoke")
-  .option("-i, --id <id>", "Contacts id")
-  .option("-n, --name <name>", "Contacts name") 
-  .option("-a, --author <author>", "Contacts author")
-  .option("-e, --email <email>", "Contacts email")
-  .option("-p, --phone <phone>", "Contacts phone");
+  .option("-i, --id <id>", "Book id")
+  .option("-t, --title <title>", "Book title")
+  .option("-at, --author <author>", "Book author")
+  .option("-n, --name <name>", "Book name")
+  .option("-e, --email <email>", "Book email")
+  .option("-p, --phone <phone>", "Book phone")
 
 console.log(process.argv);
 program.parse(process.argv);
@@ -36,4 +38,7 @@ const options = program.opts();
 console.log(options);
 
 invokeAction(options)
+  .then((res) => console.log(res))
   .catch((err) => console.log(err));
+
+  // node index.js --action="add" --name Mango --email mango@gmail.com --phone 322-22-22
