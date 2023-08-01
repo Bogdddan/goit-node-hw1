@@ -31,28 +31,6 @@ async function createContact(contact) {
   return newBook;
 }
 
-async function updateContact(id, contact) {
-  const data = await read();
-  const index = data.findIndex(contact => contact.id === contact.id);
-  if (index === -1) {
-    return undefined;
-  } 
-  const newContacts = [
-    ...contact.slice(0, index),
-    {...contact, id},
-    ...data.slice(index + 1),
-  ];
-
-  await write(newContacts);
-  return { ...contact, id };
-}
-
-// async function addContact(name, email, phone) {
-//   // ...твій код. Повертає об'єкт доданого контакту. 
-//   const data = await read();
-//   data.push();
-// }
-
 async function removeContact(id) {
   const data = await read();
   const index = data.findIndex(contact => contact.id === id);
@@ -71,7 +49,5 @@ module.exports = {
   listContacts,
   getContactById,
   removeContact,
-  // addContact,
-  updateContact,
   createContact
 }
