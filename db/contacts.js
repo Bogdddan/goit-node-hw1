@@ -1,31 +1,31 @@
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const crypto = require('node:crypto');
+const fs = require("node:fs/promises");
+const path = require("node:path");
+const crypto = require("node:crypto");
 
-const contactPath = path.join(__dirname, "/contacts.json");
+const FILE_PATH = path.join(__dirname, "books.json");
 
 async function read() {
-  const data = await fs.readFile(contactPath, "utf8");
+  const data = await fs.readFile(FILE_PATH, "utf-8");
   return JSON.parse(data);
 }
 
 function write(data) {
-  return fs.writeFile(contactPath, JSON.stringify(data));
+  return fs.writeFile(FILE_PATH, JSON.stringify(data));
 }
 
 async function listContacts() {
-  const contacts = await read();
-  return contacts;
+  const data = await read();
+  return data;
 }
 
 async function getContactById(id) {
   const data = await read();
-  return data.find(contact => contact.id === id);
+  return data.find((book) => book.id === id);
 }
 
-async function createContact(contact) {
+async function addContact(book) {
   const data = await read();
-  const newBook = { ...contact, id: crypto.randomUUID() };
+  const newBook = { ...book, id: crypto.randomUUID() };
   data.push(newBook);
   await write(data);
   return newBook;
@@ -33,21 +33,18 @@ async function createContact(contact) {
 
 async function removeContact(id) {
   const data = await read();
-  const index = data.findIndex(contact => contact.id === id);
+  const index = data.findIndex((book) => book.id === id);
   if (index === -1) {
     return undefined;
   }
-  const newContacts = [
-  ...data.slice(0, index),
-  ...data.slice(index + 1),
-  ];
-  await write(newContacts);
-  return 'успіх';
+  const newBooks = [...data.slice(0, index), ...data.slice(index + 1)];
+  await write(newBooks);
+  return data[index];
 }
 
 module.exports = {
   listContacts,
   getContactById,
-  removeContact,
-  createContact
-}
+  addContact,
+  removeContact
+};

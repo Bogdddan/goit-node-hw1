@@ -1,51 +1,40 @@
+const { program } = require("commander");
+
 const Contacts = require("./db/contacts.js");
 
-// const argv = require('yargs').argv;
-
-async function invokeAction({ action, id, name, email, phone }) {
+async function invokeAction({ action, id, name, title, author }) {
   switch (action) {
-    case 'list':
-      // ...
+    case "list":
       const contacts = await Contacts.listContacts();
-      console.log(contacts);
-      break;
-
-    case 'get':
-      // ... id
+      return contacts;
+    case "get":
       const contact = await Contacts.getContactById(id);
-      log(contact);
-      break;
-
-    case 'add':
-      // ... name email phone
-      const newContact = await Contacts.createContact({ title, author });
-      console.log(newContact);
-      break;
-
-    case 'remove':
-      // ... id
+      return contact;
+    case "add":
+      const newContact = await Contacts.addContact({ name, title, author });
+      return newContact;
+    case "remove":
       const removedContact = await Contacts.removeContact(id);
-      console.log(removedContact);
-      break;
-
+      return removedContact;
     default:
-      console.warn('\x1B[31m Unknown action type!');
+      console.log("Unknown action");
   }
 }
 
+program
+  .option("-a, --action <action>", "Action to invoke")
+  .option("-i, --id <id>", "Contacts id")
+  .option("-n, --name <name>", "Contacts name") 
+  .option("-a, --author <author>", "Contacts author")
+  .option("-e, --email <email>", "Contacts email")
+  .option("-p, --phone <phone>", "Contacts phone");
+
 console.log(process.argv);
+program.parse(process.argv);
 
-// node index.js --action update --id 12345 --title "Mew Title" --author "New Author"
+const options = program.opts();
 
-const actionIndex = process.argv.indexOf("--action");
+console.log(options);
 
-if (actionIndex !== -1) {
-  const action = process.argv[actionIndex + 1];
-  const id = process.argv[actionIndex + 3];
-  const name = process.argv[actionIndex + 5];
-  const author = process.argv[actionIndex + 7];
-
-  invokeAction({ action, id, name, author })
-    .catch(err => console.error(err));
-
-}
+invokeAction(options)
+  .catch((err) => console.log(err));
